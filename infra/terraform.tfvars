@@ -13,9 +13,9 @@ existing_rg_name = "fh-manuals"
 mi_name = "mi-fh-projects-github"
 
 # Azure SQL Database 
-# sql_server_name   = "sql-swe-wts"
-# sql_database_name = "wts-project-db"
-# sql_admin_username = "sqladmin"
+sql_server_name   = "sql-swe-wts"
+sql_database_name = "wts-project-db"
+sql_admin_username = "sqladmin"
 
 api_port   = 8080
 

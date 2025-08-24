@@ -30,34 +30,34 @@ resource "azurerm_key_vault" "kv" {
   soft_delete_retention_days  = 7
 }
 
-# KV-Secrets mit SQL-Daten - AUSKOMMENTIERT
-# resource "azurerm_key_vault_secret" "db_host" {
-#   name         = "DB-HOST"
-#   value        = azurerm_mssql_server.sql_server.fully_qualified_domain_name
-#   key_vault_id = azurerm_key_vault.kv.id
-#   depends_on   = [azurerm_role_assignment.terraform_kv_secrets_officer]
-# }
+# KV-Secrets mit SQL-Daten
+resource "azurerm_key_vault_secret" "db_host" {
+  name         = "DB-HOST"
+  value        = azurerm_mssql_server.sql_server.fully_qualified_domain_name
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on   = [azurerm_role_assignment.terraform_kv_secrets_officer]
+}
 
-# resource "azurerm_key_vault_secret" "db_name" {
-#   name         = "DB-NAME"
-#   value        = azurerm_mssql_database.sql_database.name
-#   key_vault_id = azurerm_key_vault.kv.id
-#   depends_on   = [azurerm_role_assignment.terraform_kv_secrets_officer]
-# }
+resource "azurerm_key_vault_secret" "db_name" {
+  name         = "DB-NAME"
+  value        = azurerm_mssql_database.sql_database.name
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on   = [azurerm_role_assignment.terraform_kv_secrets_officer]
+}
 
-# resource "azurerm_key_vault_secret" "db_user" {
-#   name         = "DB-USER"
-#   value        = var.sql_admin_username
-#   key_vault_id = azurerm_key_vault.kv.id
-#   depends_on   = [azurerm_role_assignment.terraform_kv_secrets_officer]
-# }
+resource "azurerm_key_vault_secret" "db_user" {
+  name         = "DB-USER"
+  value        = var.sql_admin_username
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on   = [azurerm_role_assignment.terraform_kv_secrets_officer]
+}
 
-# resource "azurerm_key_vault_secret" "db_pass" {
-#   name         = "DB-PASS"
-#   value        = random_password.sql_admin_password.result
-#   key_vault_id = azurerm_key_vault.kv.id
-#   depends_on   = [azurerm_role_assignment.terraform_kv_secrets_officer]
-# }
+resource "azurerm_key_vault_secret" "db_pass" {
+  name         = "DB-PASS"
+  value        = random_password.sql_admin_password.result
+  key_vault_id = azurerm_key_vault.kv.id
+  depends_on   = [azurerm_role_assignment.terraform_kv_secrets_officer]
+}
 
 resource "azurerm_log_analytics_workspace" "law" {
   name                = "${var.prefix}-law"
@@ -129,55 +129,54 @@ resource "azurerm_container_app" "api" {
         value = join(",", distinct(concat(var.allowed_origins, [azurerm_storage_account.static.primary_web_endpoint])))
       }
 
-      # DB Environment Variables - AUSKOMMENTIERT
-      # env {
-      #   name        = "DB_HOST"
-      #   secret_name = "db-host"
-      # }
+      env {
+        name        = "DB_HOST"
+        secret_name = "db-host"
+      }
       
-      # env {
-      #   name        = "DB_NAME"
-      #   secret_name = "db-name"
-      # }
+      env {
+        name        = "DB_NAME"
+        secret_name = "db-name"
+      }
       
-      # env {
-      #   name        = "DB_USER"
-      #   secret_name = "db-user"
-      # }
+      env {
+        name        = "DB_USER"
+        secret_name = "db-user"
+      }
       
-      # env {
-      #   name        = "DB_PASS"
-      #   secret_name = "db-pass"
-      # }
+      env {
+        name        = "DB_PASS"
+        secret_name = "db-pass"
+      }
     }
     min_replicas = 1
     max_replicas = 1
   }
 
-  # KeyVault-Secrets - AUSKOMMENTIERT
-  # secret {
-  #   name                 = "db-host"
-  #   key_vault_secret_id  = azurerm_key_vault_secret.db_host.id
-  #   identity             = data.azurerm_user_assigned_identity.mi.id
-  # }
+  # KeyVault-Secrets
+  secret {
+    name                 = "db-host"
+    key_vault_secret_id  = azurerm_key_vault_secret.db_host.id
+    identity             = data.azurerm_user_assigned_identity.mi.id
+  }
   
-  # secret {
-  #   name                 = "db-name"
-  #   key_vault_secret_id  = azurerm_key_vault_secret.db_name.id
-  #   identity             = data.azurerm_user_assigned_identity.mi.id
-  # }
+  secret {
+    name                 = "db-name"
+    key_vault_secret_id  = azurerm_key_vault_secret.db_name.id
+    identity             = data.azurerm_user_assigned_identity.mi.id
+  }
   
-  # secret {
-  #   name                 = "db-user"
-  #   key_vault_secret_id  = azurerm_key_vault_secret.db_user.id
-  #   identity             = data.azurerm_user_assigned_identity.mi.id
-  # }
+  secret {
+    name                 = "db-user"
+    key_vault_secret_id  = azurerm_key_vault_secret.db_user.id
+    identity             = data.azurerm_user_assigned_identity.mi.id
+  }
   
-  # secret {
-  #   name                 = "db-pass"
-  #   key_vault_secret_id  = azurerm_key_vault_secret.db_pass.id
-  #   identity             = data.azurerm_user_assigned_identity.mi.id
-  # }
+  secret {
+    name                 = "db-pass"
+    key_vault_secret_id  = azurerm_key_vault_secret.db_pass.id
+    identity             = data.azurerm_user_assigned_identity.mi.id
+  }
 }
 
 # Rollen für die UAMI (Runtime)
@@ -213,54 +212,54 @@ resource "azurerm_role_assignment" "terraform_kv_secrets_officer" {
   principal_id         = data.azurerm_client_config.me.object_id
 }
 
-# Random password für SQL Server Admin - AUSKOMMENTIERT
-# resource "random_password" "sql_admin_password" {
-#   length  = 16
-#   special = true
-#   upper   = true
-#   lower   = true
-#   numeric = true
-# }
+# Random password für SQL Server Admin
+resource "random_password" "sql_admin_password" {
+  length  = 16
+  special = true
+  upper   = true
+  lower   = true
+  numeric = true
+}
 
-# Azure SQL Server - AUSKOMMENTIERT
-# resource "azurerm_mssql_server" "sql_server" {
-#   name                         = var.sql_server_name
-#   resource_group_name          = azurerm_resource_group.rg.name
-#   location                     = azurerm_resource_group.rg.location
-#   version                      = "12.0"
-#   administrator_login          = var.sql_admin_username
-#   administrator_login_password = random_password.sql_admin_password.result
-#   
-#   identity {
-#     type = "SystemAssigned"
-#   }
+# Azure SQL Server
+resource "azurerm_mssql_server" "sql_server" {
+  name                         = var.sql_server_name
+  resource_group_name          = azurerm_resource_group.rg.name
+  location                     = azurerm_resource_group.rg.location
+  version                      = "12.0"
+  administrator_login          = var.sql_admin_username
+  administrator_login_password = random_password.sql_admin_password.result
+  
+  identity {
+    type = "SystemAssigned"
+  }
 
-#   tags = {
-#     Environment = "Development"
-#     Project     = "WTS-Project"
-#   }
-# }
+  tags = {
+    Environment = "Development"
+    Project     = "WTS-Project"
+  }
+}
 
-# Azure SQL Database - AUSKOMMENTIERT
-# resource "azurerm_mssql_database" "sql_database" {
-#   name           = var.sql_database_name
-#   server_id      = azurerm_mssql_server.sql_server.id
-#   collation      = "SQL_Latin1_General_CP1_CI_AS"
-#   license_type   = "LicenseIncluded"
-#   max_size_gb    = 2
-#   sku_name       = "Basic"
-#   zone_redundant = false
+# Azure SQL Database
+resource "azurerm_mssql_database" "sql_database" {
+  name           = var.sql_database_name
+  server_id      = azurerm_mssql_server.sql_server.id
+  collation      = "SQL_Latin1_General_CP1_CI_AS"
+  license_type   = "LicenseIncluded"
+  max_size_gb    = 2
+  sku_name       = "Basic"
+  zone_redundant = false
 
-#   tags = {
-#     Environment = "Development"
-#     Project     = "WTS-Project"
-#   }
-# }
+  tags = {
+    Environment = "Development"
+    Project     = "WTS-Project"
+  }
+}
 
-# Firewall Regel für Azure Services - AUSKOMMENTIERT
-# resource "azurerm_mssql_firewall_rule" "allow_azure_services" {
-#   name             = "AllowAzureServices"
-#   server_id        = azurerm_mssql_server.sql_server.id
-#   start_ip_address = "0.0.0.0"
-#   end_ip_address   = "0.0.0.0"
-# }
+# Firewall Regel für Azure Services
+resource "azurerm_mssql_firewall_rule" "allow_azure_services" {
+  name             = "AllowAzureServices"
+  server_id        = azurerm_mssql_server.sql_server.id
+  start_ip_address = "0.0.0.0"
+  end_ip_address   = "0.0.0.0"
+}

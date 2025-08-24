@@ -10,7 +10,7 @@ ca_name    = "ca-swe-wts-backend"
 
 # Existierende Ressourcen in fh-manuals
 existing_rg_name = "fh-manuals"
-existing_uami_name = "mi-fh-projects-github"
+mi_name = "mi-fh-projects-github"
 
 # Azure SQL Database
 sql_server_name   = "sql-swe-wts"

@@ -1,8 +1,8 @@
 data "azurerm_client_config" "me" {}
 
 # Data source für UAMI in fh-manuals
-data "azurerm_user_assigned_identity" "existing_uami" {
-  name                = var.existing_uami_name
+data "azurerm_user_assigned_identity" "mi" {
+  name                = var.mi_name
   resource_group_name = var.existing_rg_name
 }
 
@@ -98,12 +98,12 @@ resource "azurerm_container_app" "api" {
 
   identity {
     type         = "UserAssigned"
-    identity_ids = [data.azurerm_user_assigned_identity.existing_uami.id]
+    identity_ids = [data.azurerm_user_assigned_identity.mi.id]
   }
 
   registry {
     server   = azurerm_container_registry.acr.login_server
-    identity = data.azurerm_user_assigned_identity.existing_uami.id
+    identity = data.azurerm_user_assigned_identity.mi.id
   }
 
   ingress {
@@ -157,25 +157,25 @@ resource "azurerm_container_app" "api" {
   secret {
     name                 = "db-host"
     key_vault_secret_id  = azurerm_key_vault_secret.db_host.id
-    identity             = data.azurerm_user_assigned_identity.existing_uami.id
+    identity             = data.azurerm_user_assigned_identity.mi.id
   }
   
   secret {
     name                 = "db-name"
     key_vault_secret_id  = azurerm_key_vault_secret.db_name.id
-    identity             = data.azurerm_user_assigned_identity.existing_uami.id
+    identity             = data.azurerm_user_assigned_identity.mi.id
   }
   
   secret {
     name                 = "db-user"
     key_vault_secret_id  = azurerm_key_vault_secret.db_user.id
-    identity             = data.azurerm_user_assigned_identity.existing_uami.id
+    identity             = data.azurerm_user_assigned_identity.mi.id
   }
   
   secret {
     name                 = "db-pass"
     key_vault_secret_id  = azurerm_key_vault_secret.db_pass.id
-    identity             = data.azurerm_user_assigned_identity.existing_uami.id
+    identity             = data.azurerm_user_assigned_identity.mi.id
   }
 }
 
@@ -183,19 +183,26 @@ resource "azurerm_container_app" "api" {
 resource "azurerm_role_assignment" "uami_acr_pull" {
   scope                = azurerm_container_registry.acr.id
   role_definition_name = "AcrPull"
-  principal_id         = data.azurerm_user_assigned_identity.existing_uami.principal_id
+  principal_id         = data.azurerm_user_assigned_identity.mi.principal_id
 }
 
 resource "azurerm_role_assignment" "uami_kv_secrets_user" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Secrets User"
-  principal_id         = data.azurerm_user_assigned_identity.existing_uami.principal_id
+  principal_id         = data.azurerm_user_assigned_identity.mi.principal_id
 }
 
 resource "azurerm_role_assignment" "uami_contributor_rg" {
   scope                = azurerm_resource_group.rg.id
   role_definition_name = "Contributor"
-  principal_id         = data.azurerm_user_assigned_identity.existing_uami.principal_id
+  principal_id         = data.azurerm_user_assigned_identity.mi.principal_id
+}
+
+# Storage Blob Data Contributor für GitHub Actions Deployment
+resource "azurerm_role_assignment" "uami_storage_blob_contributor" {
+  scope                = azurerm_storage_account.static.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = data.azurerm_user_assigned_identity.mi.principal_id
 }
 
 # Role Assignment für Terraform

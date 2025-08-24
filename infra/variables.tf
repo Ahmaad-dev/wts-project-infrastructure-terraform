@@ -42,7 +42,7 @@ variable "ca_name" {
   description = "Container App Name"
 }
 
-variable "existing_uami_name" {
+variable "mi_name" {
   type        = string
   default     = "mi-fh-projects-github"
   description = "Name der existierenden User Assigned Managed Identity"

@@ -22,7 +22,7 @@ jobs:
       TF_VAR_cae_name: cae-swe-wts
       TF_VAR_ca_name:  ca-swe-wts-backend
       TF_VAR_existing_rg_name: fh-manuals
-      TF_VAR_existing_uami_name: mi-fh-projects-github
+      TF_VAR_mi_name: mi-fh-projects-github
       TF_VAR_sql_server_name: sql-swe-wts
       TF_VAR_sql_database_name: wts-project-db
       TF_VAR_sql_admin_username: sqladmin

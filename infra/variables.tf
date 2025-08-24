@@ -72,20 +72,20 @@ variable "existing_rg_name" {
   description = "Name der existierenden Resource Group mit UAMI und Storage Account"
 }
 
-# Azure SQL Database Konfiguration
-variable "sql_server_name" {
-  type        = string
-  description = "Azure SQL Server Name"
-}
+# Azure SQL Database Konfiguration - commented out
+# variable "sql_server_name" {
+#   type        = string
+#   description = "Azure SQL Server Name"
+# }
 
-variable "sql_database_name" {
-  type        = string
-  default     = "wts-project-db"
-  description = "Azure SQL Database Name"
-}
+# variable "sql_database_name" {
+#   type        = string
+#   default     = "wts-project-db"
+#   description = "Azure SQL Database Name"
+# }
 
-variable "sql_admin_username" {
-  type        = string
-  default     = "sqladmin"
-  description = "SQL Server Admin Username"
-}
+# variable "sql_admin_username" {
+#   type        = string
+#   default     = "sqladmin"
+#   description = "SQL Server Admin Username"
+# }

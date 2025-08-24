@@ -1,6 +1,6 @@
 data "azurerm_client_config" "me" {}
 
-# Data source für existierende UAMI in fh-manuals
+# Data source für UAMI in fh-manuals
 data "azurerm_user_assigned_identity" "existing_uami" {
   name                = var.existing_uami_name
   resource_group_name = var.existing_rg_name
@@ -30,7 +30,7 @@ resource "azurerm_key_vault" "kv" {
   soft_delete_retention_days  = 7
 }
 
-# KV-Secrets mit automatisch generierten SQL-Daten
+# KV-Secrets mit SQL-Daten
 resource "azurerm_key_vault_secret" "db_host" {
   name         = "DB-HOST"
   value        = azurerm_mssql_server.sql_server.fully_qualified_domain_name
@@ -88,10 +88,7 @@ resource "azurerm_storage_account" "static" {
   }
 }
 
-# Die existierende UAMI aus fh-manuals wird via data source referenziert
-# resource "azurerm_user_assigned_identity" wurde entfernt
-
-# Container App mit UAMI (auch für ACR Pull & KV Secrets)
+# Container App mit UAMI
 resource "azurerm_container_app" "api" {
   name                         = var.ca_name
   resource_group_name          = azurerm_resource_group.rg.name
@@ -155,7 +152,7 @@ resource "azurerm_container_app" "api" {
     max_replicas = 1
   }
 
-  # KeyVault-Secrets per UAMI binden
+  # KeyVault-Secrets
   secret {
     name                 = "db-host"
     key_vault_secret_id  = azurerm_key_vault_secret.db_host.id
@@ -181,7 +178,7 @@ resource "azurerm_container_app" "api" {
   }
 }
 
-# Rollen für die UAMI (Runtime) - vervollständigt
+# Rollen für die UAMI (Runtime)
 resource "azurerm_role_assignment" "uami_acr_pull" {
   scope                = azurerm_container_registry.acr.id
   role_definition_name = "AcrPull"
@@ -194,14 +191,13 @@ resource "azurerm_role_assignment" "uami_kv_secrets_user" {
   principal_id         = data.azurerm_user_assigned_identity.existing_uami.principal_id
 }
 
-# Zusätzliche Permissions für die UAMI für Deployment-Operationen
 resource "azurerm_role_assignment" "uami_contributor_rg" {
   scope                = azurerm_resource_group.rg.id
   role_definition_name = "Contributor"
   principal_id         = data.azurerm_user_assigned_identity.existing_uami.principal_id
 }
 
-# Role Assignment für Terraform (aktueller Benutzer) um Secrets zu erstellen
+# Role Assignment für Terraform
 resource "azurerm_role_assignment" "terraform_kv_secrets_officer" {
   scope                = azurerm_key_vault.kv.id
   role_definition_name = "Key Vault Secrets Officer"

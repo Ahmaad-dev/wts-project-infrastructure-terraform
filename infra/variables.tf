@@ -50,7 +50,7 @@ variable "mi_name" {
 
 variable "image_tag" {
   type        = string
-  default     = "latest"
+  default     = "1"
   description = "Container image tag"
 }
 

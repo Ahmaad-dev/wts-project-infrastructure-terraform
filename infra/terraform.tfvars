@@ -12,10 +12,10 @@ ca_name    = "ca-swe-wts-backend"
 existing_rg_name = "fh-manuals"
 mi_name = "mi-fh-projects-github"
 
-# Azure SQL Database - commented out for deletion
-# sql_server_name   = "sql-swe-wts"
-# sql_database_name = "wts-project-db"
-# sql_admin_username = "sqladmin"
+# Azure SQL Database 
+sql_server_name   = "sql-swe-wts"
+sql_database_name = "wts-project-db"
+sql_admin_username = "sqladmin"
 
 api_port   = 8080
 

@@ -75,15 +75,16 @@ resource "azurerm_container_app_environment" "cae" {
 }
 
 resource "azurerm_storage_account" "static" {
-  name                     = var.sa_name
-  resource_group_name      = azurerm_resource_group.rg.name
-  location                 = azurerm_resource_group.rg.location
-  account_kind             = "StorageV2"
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
+  name                            = var.sa_name
+  resource_group_name             = azurerm_resource_group.rg.name
+  location                        = azurerm_resource_group.rg.location
+  account_kind                    = "StorageV2"
+  account_tier                    = "Standard"
+  account_replication_type        = "LRS"
+  allow_nested_items_to_be_public = true
 
   static_website {
-    index_document     = "index.html"
+    index_document     = "base.html"
     error_404_document = "404.html"
   }
 }

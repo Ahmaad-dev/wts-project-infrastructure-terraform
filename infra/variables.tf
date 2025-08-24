@@ -59,10 +59,6 @@ variable "api_port" {
   default     = 8080
   description = "API Port"
 }
-
-# Azure SQL Database Konfiguration - Passwort wird automatisch generiert
-# Keine manuellen DB-Credentials mehr erforderlich!
-
 variable "allowed_origins" {
   type        = list(string)
   default     = []

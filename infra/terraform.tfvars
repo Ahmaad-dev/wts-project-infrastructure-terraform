@@ -3,19 +3,22 @@ prefix     = "swewts"
 location   = "Sweden Central"
 rg_name    = "fh-wts-project"
 acr_name   = "acrswewts"
-kv_name    = "kv-swe-wts"
+# Key Vault - AUSKOMMENTIERT für später
+# kv_name    = "kv-swe-wts"
 sa_name    = "saswewtsz1"
-cae_name   = "cae-swe-wts"
-ca_name    = "ca-swe-wts-backend"
+# Container App Environment - AUSKOMMENTIERT für später
+# cae_name   = "cae-swe-wts"
+# Container App - AUSKOMMENTIERT für später
+# ca_name    = "ca-swe-wts-backend"
 
 # Existierende Ressourcen in fh-manuals
 existing_rg_name = "fh-manuals"
 mi_name = "mi-fh-projects-github"
 
-# Azure SQL Database 
-sql_server_name   = "sql-swe-wts"
-sql_database_name = "wts-project-db"
-sql_admin_username = "sqladmin"
+# Azure SQL Database - AUSKOMMENTIERT für später
+# sql_server_name   = "sql-swe-wts"
+# sql_database_name = "wts-project-db"
+# sql_admin_username = "sqladmin"
 
 api_port   = 8080
 

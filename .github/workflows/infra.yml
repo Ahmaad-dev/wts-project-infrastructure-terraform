@@ -1,0 +1,59 @@
+name: infra
+on:
+  push:
+    branches: [main]
+    paths: [ "infra/**", ".github/workflows/infra.yml" ]
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    env:
+      # nicht-sensitive Defaults hier als ENV (oder in separater tfvars im Repo)
+      TF_VAR_prefix:  swewts
+      TF_VAR_location: "Sweden Central"
+      TF_VAR_rg_name: fh-wts-project
+      TF_VAR_acr_name: acrswewts
+      TF_VAR_kv_name: kv-swe-wts
+      TF_VAR_sa_name: saswewtsz1
+      TF_VAR_cae_name: cae-swe-wts
+      TF_VAR_ca_name:  ca-swe-wts-backend
+      TF_VAR_existing_rg_name: fh-manuals
+      TF_VAR_existing_uami_name: mi-fh-projects-github
+      TF_VAR_sql_server_name: sql-swe-wts
+      TF_VAR_sql_database_name: wts-project-db
+      TF_VAR_sql_admin_username: sqladmin
+      TF_VAR_allowed_origins: '["https://saswewtsz1.z1.web.core.windows.net"]'
+      # Keine DB-Secrets mehr erforderlich - werden automatisch generiert!
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+
+      - name: Azure login via Managed Identity (OIDC)
+        uses: azure/login@v2
+        with:
+          tenant-id:       ${{ secrets.AZURE_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          client-id:       ${{ secrets.AZURE_CLIENT_ID }}   # = UAMI Client ID
+
+      - name: Ensure tfstate container exists
+        run: |
+          az storage container create \
+            --name wts-project-tfstate \
+            --account-name terraform01manual || true
+
+      - name: terraform init
+        working-directory: infra
+        run: terraform init -backend-config=backend.tfvars
+
+      - name: terraform plan
+        working-directory: infra
+        run: terraform plan -out=tf.plan
+
+      - name: terraform apply
+        working-directory: infra
+        run: terraform apply -auto-approve tf.plan

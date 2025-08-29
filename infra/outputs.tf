@@ -1,10 +1,6 @@
 output "container_app_url"  {
     value = azurerm_container_app.api.latest_revision_fqdn
 }
-output "container_app_fqdn" {
-  value       = azurerm_container_app.backend.latest_revision_fqdn
-  description = "Public FQDN of the backend Container App"
-}
 output "static_website_url" {
     value = azurerm_storage_account.static.primary_web_endpoint
 }

@@ -34,8 +34,6 @@ jobs:
       TF_VAR_sql_database_name: wts-project-db
       TF_VAR_sql_admin_username: sqladmin
       TF_VAR_allowed_origins: '["https://saswewtsz1.z1.web.core.windows.net"]'
-      TF_VAR_image_tag: "2"
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4

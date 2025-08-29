@@ -50,7 +50,7 @@ variable "mi_name" {
 
 variable "image_tag" {
   type        = string
-  default     = "1"
+  default     = "3"
   description = "Container image tag"
 }
 
@@ -62,7 +62,7 @@ variable "api_port" {
 variable "allowed_origins" {
   type        = list(string)
   default     = []
-  description = "Allowed Origins"
+  description = "Allowed Origins for CORS"
 }
 
 # Existierende Ressourcen in fh-manuals

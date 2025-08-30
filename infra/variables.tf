@@ -30,6 +30,18 @@ variable "sa_name" {
   description = "Storage Account Name"
 }
 
+variable "static_index_document" {
+  type        = string
+  default     = "base.html"
+  description = "Static Website Index Document"
+}
+
+variable "static_error_document" {
+  type        = string
+  default     = "404.html"
+  description = "Static Website Error Document"
+}
+
 variable "cae_name" {
   type        = string
   default     = "cae-swe-wts"
@@ -50,7 +62,7 @@ variable "mi_name" {
 
 variable "image_tag" {
   type        = string
-  default     = "3"
+  default     = "4.0.0"
   description = "Container image tag"
 }
 

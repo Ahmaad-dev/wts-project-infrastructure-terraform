@@ -84,8 +84,8 @@ resource "azurerm_storage_account" "static" {
   allow_nested_items_to_be_public = true
 
   static_website {
-    index_document     = "base.html"
-    error_404_document = "404.html"
+    index_document     = var.static_index_document
+    error_404_document = var.static_error_document
   }
 }
 
